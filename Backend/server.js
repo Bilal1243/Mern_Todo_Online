@@ -1,56 +1,30 @@
-import express from 'express'
-import connectDb from './config/db.js'
-import Todos from './model/todoModel.js'
+import express from "express";
+import connectDb from "./config/db.js";
+import todoRoute from "./routes/todoRoutes.js";
+import cors from 'cors'
 
-const app = express()
+const app = express();
 
-let port = 3000
+let port = 3000;
 
+connectDb();
 
-connectDb()
-
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors())
 
 // app.method(path , handler)
 
 // req.body
 
-// creating new todo
-app.post('/create-todo', async (req, res) => {
-    // let title = req.body.title
-    // let description = req.body.description
-    try {
+// http://localhost:3000/api/todo/create-todo
 
-        let { title, description } = req.body
-
-
-        let newTodo = await Todos.create({
-            title,
-            description
-        })
-
-
-        // res.send('success')
-
-        res.json(newTodo)
-
-    } catch (error) {
-        console.log(error)
-    }
-
-})
-
+app.use("/api/todo", todoRoute);
 
 // app.post('/register' , (req,res)=>{
 
 // })
 
-
-app.listen(port, () => console.log('server started'))
-
-
+app.listen(port, () => console.log("server started"));
 
 // oYfDU5nmDqI4trln
