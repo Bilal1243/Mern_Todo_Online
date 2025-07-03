@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Backend from "../Axios";
 import "./HomePage.css";
 import { toast } from "react-toastify";
+import {
+  useGetTodosQuery,
+  useCreateTodoMutation,
+  useDeleteTodoMutation
+} from "../slices/todoApiSlice";
 
 function HomePage() {
-  let [todos, setTodos] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const getTodos = async () => {
-    try {
-      let data = await Backend.get("/getTodos");
+  const { data: todos, refetch } = useGetTodosQuery();
 
-      setTodos(data.data);
-    } catch (error) {
-      console.log(error?.message || error?.data?.message);
-    }
-  };
-
-  useEffect(() => {
-    getTodos();
-  }, []);
+  const [createTodo] = useCreateTodoMutation();
+  const [deleteTodo] = useDeleteTodoMutation()
 
   const navigate = useNavigate();
 
@@ -29,8 +23,8 @@ function HomePage() {
     e.preventDefault();
 
     try {
-      let response = await Backend.post("/create-todo", { title, description });
-      getTodos();
+      let response = await createTodo({title , description}).unwrap()
+      refetch();
       toast.success("Todo Created Successfully");
       setTitle("");
       setDescription("");
@@ -42,8 +36,8 @@ function HomePage() {
 
   const deleteHandler = async (id) => {
     try {
-      let response = await Backend.delete(`/${id}`);
-      getTodos();
+      let response = await deleteTodo(id).unwrap()
+      refetch();
       toast.success("Todo Deleted Successfully");
     } catch (error) {
       console.log(error?.message || error?.data?.message);
