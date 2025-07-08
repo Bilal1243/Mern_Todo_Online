@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import {
   useGetTodosQuery,
   useCreateTodoMutation,
-  useDeleteTodoMutation
+  useDeleteTodoMutation,
 } from "../slices/todoApiSlice";
 
 function HomePage() {
@@ -15,7 +15,7 @@ function HomePage() {
   const { data: todos, refetch } = useGetTodosQuery();
 
   const [createTodo] = useCreateTodoMutation();
-  const [deleteTodo] = useDeleteTodoMutation()
+  const [deleteTodo] = useDeleteTodoMutation();
 
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ function HomePage() {
     e.preventDefault();
 
     try {
-      let response = await createTodo({title , description}).unwrap()
+      let response = await createTodo({ title, description }).unwrap();
       refetch();
       toast.success("Todo Created Successfully");
       setTitle("");
@@ -36,7 +36,7 @@ function HomePage() {
 
   const deleteHandler = async (id) => {
     try {
-      let response = await deleteTodo(id).unwrap()
+      let response = await deleteTodo(id).unwrap();
       refetch();
       toast.success("Todo Deleted Successfully");
     } catch (error) {
@@ -72,7 +72,7 @@ function HomePage() {
         <div className="todos-container">
           {todos?.map((todo) => (
             <div className="box todo-card" key={todo._id}>
-              <h1 className={todo.status ? "completed" : "todo-title"}>
+              <h1 className={todo?.isCompleted ? "completed" : "todo-title"}>
                 {todo.title}
               </h1>
               <p className="todo-description">{todo.description}</p>
