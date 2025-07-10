@@ -7,12 +7,16 @@ import {
   useCreateTodoMutation,
   useDeleteTodoMutation,
 } from "../slices/todoApiSlice";
+import { useSelector } from "react-redux";
 
 function HomePage() {
+
+  const {userInfo} = useSelector((state) => state.auth)
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const { data: todos, refetch } = useGetTodosQuery();
+  const { data: todos, refetch } = useGetTodosQuery({userId : userInfo?._id});
 
   const [createTodo] = useCreateTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
@@ -23,7 +27,7 @@ function HomePage() {
     e.preventDefault();
 
     try {
-      let response = await createTodo({ title, description }).unwrap();
+      let response = await createTodo({ title, description , userId : userInfo?._id }).unwrap();
       refetch();
       toast.success("Todo Created Successfully");
       setTitle("");
@@ -44,6 +48,13 @@ function HomePage() {
       toast.error(error?.message || error?.data?.message);
     }
   };
+
+
+  useEffect(()=>{
+    if(!userInfo){
+        navigate('/login')
+    }
+  },[])
 
   return (
     <>

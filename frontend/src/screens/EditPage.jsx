@@ -7,16 +7,21 @@ import {
 } from "../slices/todoApiSlice";
 import "./EditPage.css";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 function EditPage() {
   const { id } = useParams();
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
 
   const { data: todo, refetch } = useGetTodoByIdQuery({ id });
-  const { data, refetch: getAllTodos } = useGetTodosQuery();
+  const { data, refetch: getAllTodos } = useGetTodosQuery({
+    userId: userInfo?._id,
+  });
 
   const [updateTodo] = useUpdateTodoMutation();
 

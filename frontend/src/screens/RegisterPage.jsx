@@ -1,23 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./RegisterPage.css";
 import { toast } from "react-toastify";
+import { useCreateUserMutation } from "../slices/userApiSlice";
+import { useSelector } from "react-redux";
 
 function RegisterPage() {
+  const { userInfo } = useSelector((state) => state.auth);
+
   let [name, setName] = useState("");
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
+  const [createUser] = useCreateUserMutation();
+
   const registerHandler = async (e) => {
     e.preventDefault();
     try {
-     
+      let data = await createUser({ name, email, password }).unwrap();
+      toast.success("User Registration Successfull");
+      navigate("/login");
     } catch (error) {
-      toast.error(error?.message);
+      toast.error(error?.message || error?.data?.message);
     }
   };
+
+  useEffect(()=>{
+    if(userInfo){
+      navigate('/')
+    }
+  },[])
 
   return (
     <div className="container">
