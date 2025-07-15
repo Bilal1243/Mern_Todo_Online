@@ -1,4 +1,5 @@
 import Todos from "../model/todoModel.js";
+import asyncHandler from "../middlewares/asyncHandler.js";
 
 const createTodo = async (req, res) => {
   // let title = req.body.title
@@ -18,15 +19,11 @@ const createTodo = async (req, res) => {
   }
 };
 
-const getTodos = async (req, res) => {
-  try {
-    const { userId } = req.query;
-    const todos = await Todos.find({ userId: userId });
-    res.json(todos);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
+const getTodos = asyncHandler(async (req, res) => {
+  const { userId } = req.query;
+  const todos = await Todos.find({ userId: userId });
+  res.json(todos);
+});
 
 const deleteTodo = async (req, res) => {
   try {
